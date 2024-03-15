@@ -1,0 +1,26 @@
+default_language_version:
+  python: python3.10
+repos:
+  - repo: local
+    hooks:
+    - id: flake8
+      name: flake8
+      description: wemake-python-styleguide enforcement
+      entry: flake8
+      args: ["--config=tox.ini"]
+      language: python
+      types: [python]
+      additional_dependencies: [wemake-python-styleguide>=0.18.0]
+  - repo: 'https://github.com/pycqa/isort'
+    rev: 5.12.0
+    hooks:
+      - id: isort
+  - repo: 'https://github.com/psf/black'
+    rev: 23.1.0
+    hooks:
+      - id: black
+        args: ["--skip-string-normalization", "--line-length=120", "--check"]
+  - repo: https://github.com/asottile/add-trailing-comma
+    rev: v2.5.1
+    hooks:
+      - id: add-trailing-comma
