@@ -22,7 +22,7 @@ class TextClassificationDataset(Dataset):
         self.tokenizer = tokenizer
         self.task = task
 
-    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    def __getitem__(self, idx: int) -> dict:
         """
         Get tokenized text and labels for train
 
@@ -32,7 +32,7 @@ class TextClassificationDataset(Dataset):
         text, label = self.get_row_data(idx)
 
         text_tokenized = self.tokenizer.encode_plus(
-            list(text),
+            text,
             max_length=512,
             padding='max_length',
             truncation=True,
@@ -41,11 +41,11 @@ class TextClassificationDataset(Dataset):
             return_tensors='pt',
         )
 
-        return (
-            text_tokenized.data['input_ids'].squeeze(0),
-            text_tokenized.data['attention_mask'].squeeze(0),
-            torch.tensor(self.label2ind(str(label)), dtype=torch.int),
-        )
+        return {
+            'texts_ids': text_tokenized.data['input_ids'].squeeze(0),
+            'attention_mask': text_tokenized.data['attention_mask'].squeeze(0),
+            'label': torch.tensor(self.label2ind(str(label))),
+        }
 
     def __len__(self) -> int:
         """

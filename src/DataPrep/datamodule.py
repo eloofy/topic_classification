@@ -27,8 +27,8 @@ class TextClassificationDatamodule(LightningDataModule):
         super().__init__()
         self.cfg = cfg
 
-        self.data_path_file = Path(DEFAULT_DATA_PATH / cfg.data_path)
-        self.tokenizer = AutoTokenizer.from_pretrained(cfg.tokenizer_name)
+        self.data_path_file = Path(DEFAULT_DATA_PATH / cfg.dataset_name)
+        self.tokenizer = AutoTokenizer.from_pretrained(cfg.pretrained_tokenizer)
 
         self.save_hyperparameters(logger=False)
 
@@ -48,7 +48,7 @@ class TextClassificationDatamodule(LightningDataModule):
             data_train, data_val = train_test_split(
                 data_full,
                 test_size=self.cfg.train_size,
-                stratify=data_full['class'],
+                stratify=data_full['topic'],
             )
             self.data_train = TextClassificationDataset(
                 data_train,
