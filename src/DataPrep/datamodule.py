@@ -4,13 +4,12 @@ from typing import Optional
 from pytorch_lightning import LightningDataModule
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
+from transformers import AutoTokenizer
 
 from src.ConstantsConfigs.config import DataConfig
 from src.ConstantsConfigs.constants import DEFAULT_PROJECT_PATH
 from src.DataPrep.dataset import TextClassificationDataset
 from src.DataPrep.load_data_df import load_dataset
-
-from transformers import AutoTokenizer
 
 DEFAULT_DATA_PATH = Path(DEFAULT_PROJECT_PATH / 'dataset')
 
@@ -54,13 +53,12 @@ class TextClassificationDatamodule(LightningDataModule):
             self.data_train = TextClassificationDataset(
                 data_train,
                 tokenizer=self.tokenizer,
-                task=self.cfg.task_name
-
+                task=self.cfg.task_name,
             )
             self.data_val = TextClassificationDataset(
                 data_train,
                 tokenizer=self.tokenizer,
-                task=self.cfg.task_name
+                task=self.cfg.task_name,
             )
 
         elif stage == 'test':

@@ -1,10 +1,11 @@
-from torch.utils.data import Dataset
+from typing import Tuple
 
-from transformers import PreTrainedTokenizerFast
+import numpy as np
 import pandas as pd
 import torch
-from typing import Tuple
-import numpy as np
+from torch.utils.data import Dataset
+from transformers import PreTrainedTokenizerFast
+
 from src.ConstantsConfigs.constants import DECODE_TOPIC
 
 
@@ -30,17 +31,21 @@ class TextClassificationDataset(Dataset):
         """
         text, label = self.get_row_data(idx)
 
-        text_tokenized = self.tokenizer.encode_plus(list(text),
-                                                    max_length=512,
-                                                    padding='max_length',
-                                                    truncation=True,
-                                                    return_attention_mask=True,
-                                                    return_token_type_ids=False,
-                                                    return_tensors='pt')
+        text_tokenized = self.tokenizer.encode_plus(
+            list(text),
+            max_length=512,
+            padding='max_length',
+            truncation=True,
+            return_attention_mask=True,
+            return_token_type_ids=False,
+            return_tensors='pt',
+        )
 
-        return (text_tokenized.data['input_ids'].squeeze(0),
-                text_tokenized.data['attention_mask'].squeeze(0),
-                torch.tensor(self.label2ind(str(label)), dtype=torch.int))
+        return (
+            text_tokenized.data['input_ids'].squeeze(0),
+            text_tokenized.data['attention_mask'].squeeze(0),
+            torch.tensor(self.label2ind(str(label)), dtype=torch.int),
+        )
 
     def __len__(self) -> int:
         """
