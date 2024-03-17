@@ -28,12 +28,12 @@ class DataConfig(_BaseValidatedConfig):
     Data config
     """
 
-    batch_size: int = 32
+    batch_size: int = 64
     train_size: float = 0.8
     pin_memory: bool = True
-    num_samples: int = 6755
+    num_samples: int = 180472
     shuffle: bool = True
-    dataset_name: str = 'data_topic_soc_dem.xlsx'
+    dataset_name: str = 'data_topic_soc_dem_full.xlsx'
     task_name: str = 'social_dem'
     pretrained_tokenizer: str = 'MonoHime/rubert-base-cased-sentiment-new'
 
@@ -58,8 +58,8 @@ class TrainerConfig(_BaseValidatedConfig):
     Trainer config
     """
 
-    min_epochs: int = 100
-    max_epochs: int = 120
+    min_epochs: int = 150
+    max_epochs: int = 150
     check_val_every_n_epoch: int = 1
     log_every_n_steps: int = 8
     gradient_clip_val: Optional[float] = None
@@ -78,8 +78,8 @@ class ExperimentConfig(_BaseValidatedConfig):
     Experiment config
     """
 
-    project_name: str = 'modeling_vit'
-    experiment_name: str = 'AID'
+    project_name: str = 'BERTClassification'
+    experiment_name: str = 'exp_1'
     trainer_config: TrainerConfig = Field(default=TrainerConfig())
     data_config: DataConfig = Field(default=DataConfig())
     module_config: ModelConfig = Field(default=ModelConfig())

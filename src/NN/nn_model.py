@@ -145,7 +145,7 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
 
         scheduler = get_cosine_schedule_with_warmup(
             optimizer,
-            num_warmup_steps=500,
+            num_warmup_steps=2000,
             num_training_steps=self.trainer.estimated_stepping_batches,
             num_cycles=1.4,
         )

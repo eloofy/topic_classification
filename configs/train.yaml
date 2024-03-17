@@ -1,7 +1,7 @@
-project_name: modeling_vit
-experiment_name: AID
+project_name: BERTClassification
+experiment_name: exp_1
 data_config:
-  batch_size: 32
+  batch_size: 64
   train_size: 0.8
   pin_memory: true
   num_samples: 6755
