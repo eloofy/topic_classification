@@ -9,6 +9,8 @@ from src.ConstantsConfigs.config import ExperimentConfig
 from src.ConstantsConfigs.constants import DEFAULT_PROJECT_PATH
 from src.DataPrep.datamodule import TextClassificationDatamodule
 from src.NN.nn_model import BERTModelClassic
+from src.Callbacks.clearml import ClearMLTracking
+from src.ConstantsConfigs.constants import DECODE_TOPIC
 
 warnings.filterwarnings('ignore')
 torch.set_float32_matmul_precision('high')
@@ -23,8 +25,14 @@ def train(cfg: ExperimentConfig) -> None:
     """
     pl.seed_everything(0)
     datamodule = TextClassificationDatamodule(cfg=cfg.data_config)
+    tracking_cb = ClearMLTracking(cfg, label_enumeration=DECODE_TOPIC[cfg.data_config.task_name])
     callbacks = [
-        ModelCheckpoint(save_top_k=3, monitor='valid_f1', mode='max', every_n_epochs=5),
+        tracking_cb,
+        ModelCheckpoint(filename='BERT-{epoch}-{step}-{val_loss}',
+                        save_top_k=1,
+                        monitor='valid_f1',
+                        mode='max',
+                        every_n_epochs=50),
     ]
 
     model = BERTModelClassic(cfg=cfg.module_config)
