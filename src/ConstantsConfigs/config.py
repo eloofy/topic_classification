@@ -58,8 +58,8 @@ class TrainerConfig(_BaseValidatedConfig):
     Trainer config
     """
 
-    min_epochs: int = 15
-    max_epochs: int = 30
+    min_epochs: int = 100
+    max_epochs: int = 120
     check_val_every_n_epoch: int = 1
     log_every_n_steps: int = 8
     gradient_clip_val: Optional[float] = None

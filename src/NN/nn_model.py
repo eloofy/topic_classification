@@ -75,7 +75,7 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
         """
         logits = self(batch)
 
-        loss = func.cross_entropy(logits, batch['labels'])
+        loss = func.cross_entropy(logits, batch['label'])
         self._train_loss.update(loss)
 
         self.log('step_loss', loss, on_step=True, prog_bar=True, logger=True)
@@ -145,7 +145,7 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
 
         scheduler = get_cosine_schedule_with_warmup(
             optimizer,
-            num_warmup_steps=100,
+            num_warmup_steps=500,
             num_training_steps=self.trainer.estimated_stepping_batches,
             num_cycles=1.4,
         )
