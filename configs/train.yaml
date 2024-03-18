@@ -1,5 +1,5 @@
 project_name: BERTClassification
-experiment_name: exp_1
+experiment_name: exp_main
 data_config:
   batch_size: 64
   train_size: 0.8

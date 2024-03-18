@@ -12,6 +12,12 @@ class ClearMLTracking(Callback):
         cfg: ExperimentConfig,
         label_enumeration: Optional[Dict[str, int]] = None,
     ):
+        """
+        Constructor for clearml tracking callback
+
+        :param cfg: cfg of experiment
+        :param label_enumeration: labels
+        """
         super().__init__()
         self.cfg = cfg
         self.label_enumeration = label_enumeration
@@ -19,10 +25,21 @@ class ClearMLTracking(Callback):
         self.output_model: Optional[OutputModel] = None
 
     def on_fit_start(self, trainer: Trainer, pl_module: LightningModule) -> None:
+        """
+        Create clearml before start
+
+        :param trainer: trainer of model
+        :param pl_module: main model
+        :return:
+        """
         self._setup_task()
 
     def _setup_task(self) -> None:
-        Task.force_requirements_env_freeze()  # or use task.set_packages() for more granular control.
+        """
+        Setup clearml
+        :return:
+        """
+        Task.force_requirements_env_freeze()
         self.task = Task.init(
             project_name=self.cfg.project_name,
             task_name=self.cfg.experiment_name,

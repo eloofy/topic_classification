@@ -79,7 +79,7 @@ class ExperimentConfig(_BaseValidatedConfig):
     """
 
     project_name: str = 'BERTClassification'
-    experiment_name: str = 'exp_1'
+    experiment_name: str = 'exp_main'
     trainer_config: TrainerConfig = Field(default=TrainerConfig())
     data_config: DataConfig = Field(default=DataConfig())
     module_config: ModelConfig = Field(default=ModelConfig())

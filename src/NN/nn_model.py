@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 import torch
 import torch.nn.functional as func
@@ -55,7 +55,7 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
 
         self.save_hyperparameters()
 
-    def forward(self, batch: torch.Tensor) -> torch.Tensor:
+    def forward(self, batch: Dict[str, torch.Tensor]) -> torch.Tensor:
         """
         Forward pass
         :param batch: barch dict
@@ -66,7 +66,7 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
 
     def training_step(
         self,
-        batch: Dict[torch.Tensor, torch.Tensor],
+        batch: Dict[str, torch.Tensor],
     ) -> Dict[str, torch.Tensor]:
         """
         One training step
@@ -97,7 +97,7 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
 
     def validation_step(
         self,
-        batch: List[torch.Tensor],
+        batch: Dict[str, torch.Tensor],
         batch_idx: int,
     ) -> torch.Tensor:
         """
@@ -114,7 +114,7 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
         predictions = torch.argmax(logits, dim=1)
         self._valid_metrics.update(predictions, batch['label'])
 
-        return logits
+        return predictions
 
     def on_validation_epoch_end(self) -> None:
         """

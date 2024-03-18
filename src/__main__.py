@@ -9,14 +9,15 @@ from src.ConstantsConfigs.config import ExperimentConfig
 from src.ConstantsConfigs.constants import DEFAULT_PROJECT_PATH
 from src.DataPrep.datamodule import TextClassificationDatamodule
 from src.NN.nn_model import BERTModelClassic
-from src.Callbacks.clearml import ClearMLTracking
+from src.Callbacks.clearml_module import ClearMLTracking
 from src.ConstantsConfigs.constants import DECODE_TOPIC
+from src.Callbacks.debug import ConfusionMatrix, LogModelSummary
 
 warnings.filterwarnings('ignore')
 torch.set_float32_matmul_precision('high')
 
 
-def train(cfg: ExperimentConfig) -> None:
+def train(cfg: ExperimentConfig) -> None:  # noqa: WPS210
     """
     Train loop
 
@@ -25,14 +26,22 @@ def train(cfg: ExperimentConfig) -> None:
     """
     pl.seed_everything(0)
     datamodule = TextClassificationDatamodule(cfg=cfg.data_config)
-    tracking_cb = ClearMLTracking(cfg, label_enumeration=DECODE_TOPIC[cfg.data_config.task_name])
+    tracking_cb = ClearMLTracking(
+        cfg, label_enumeration=DECODE_TOPIC[cfg.data_config.task_name],
+    )
+    confusion_tracking = ConfusionMatrix(tracking_cb, every_n_epoch=5)
+    summary = LogModelSummary()
     callbacks = [
         tracking_cb,
-        ModelCheckpoint(filename='BERT-{epoch}-{step}-{val_loss}',
-                        save_top_k=1,
-                        monitor='valid_f1',
-                        mode='max',
-                        every_n_epochs=50),
+        summary,
+        confusion_tracking,
+        ModelCheckpoint(
+            filename='BERT-{epoch}--{val_loss:.8f}--{valid_f1:.4f}',
+            save_top_k=3,
+            monitor='valid_f1',
+            mode='max',
+            every_n_epochs=50,
+        ),
     ]
 
     model = BERTModelClassic(cfg=cfg.module_config)
