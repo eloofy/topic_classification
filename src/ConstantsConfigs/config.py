@@ -31,7 +31,7 @@ class DataConfig(_BaseValidatedConfig):
     batch_size: int = 64
     train_size: float = 0.8
     pin_memory: bool = True
-    num_samples: int = 180472
+    num_samples: int = 104758
     shuffle: bool = True
     dataset_name: str = 'data_topic_soc_dem_full.xlsx'
     task_name: str = 'social_dem'
