@@ -7,6 +7,7 @@ from torchmetrics import MeanMetric
 from transformers import BertConfig, BertModel
 
 from src.ConstantsConfigs.config import ModelConfig
+from src.DataPrep.class_balance import get_class_weights
 from src.Metrics.metrics import get_metrics
 from src.NN.schedulers import get_cosine_schedule_with_warmup
 from src.NN.serialization_module import load_object
@@ -28,6 +29,7 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
         super().__init__()
 
         self.cfg = cfg
+        self.weights = None
         self._train_loss = MeanMetric()
         self._valid_loss = MeanMetric()
 
@@ -55,13 +57,16 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
 
         self.save_hyperparameters()
 
+    def on_fit_start(self) -> None:
+        self.weights = get_class_weights(self.trainer.train_dataloader.dataset.labels)
+
     def forward(self, batch: Dict[str, torch.Tensor]) -> torch.Tensor:
         """
         Forward pass
         :param batch: barch dict
         :return: results
         """
-        outputs = self.model(batch['texts_ids'], attention_mask=batch['attention_mask'])
+        outputs = self.model(batch['input_ids'], attention_mask=batch['attention_mask'])
         return self.fc(outputs.pooler_output)
 
     def training_step(
@@ -75,7 +80,7 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
         """
         logits = self(batch)
 
-        loss = func.cross_entropy(logits, batch['label'])
+        loss = func.cross_entropy(logits, batch['label'], weight=self.weights)
         self._train_loss.update(loss)
 
         self.log('step_loss', loss, on_step=True, prog_bar=True, logger=True)
