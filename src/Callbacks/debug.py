@@ -6,8 +6,10 @@ from pytorch_lightning import Callback, LightningModule, Trainer
 from pytorch_lightning.utilities.types import STEP_OUTPUT
 from sklearn.metrics import confusion_matrix
 from torchinfo import summary
+from sklearn.metrics import f1_score
 
 from src.Callbacks.clearml_module import ClearMLTracking
+from src.ConstantsConfigs.constants import DECODE_TOPIC
 
 
 class LogModelSummary(Callback):
@@ -19,16 +21,16 @@ class LogModelSummary(Callback):
         :param pl_module: main model
         :return:
         """
-        text = next(iter(trainer.train_dataloader))['texts_ids']
+        text = next(iter(trainer.train_dataloader))['input_ids']
 
         text = text.to(pl_module.device)
         summary(pl_module.model, input_data=text)
 
 
-class ConfusionMatrix(Callback):
+class PredictsCallbackBase(Callback):
     def __init__(self, clearml_task: ClearMLTracking, every_n_epoch: int):
         """
-        Constructor for Confusion Matrix Callback
+        Constructor for Confusion Matrix and each class f1 Callback
 
         :param clearml_task: created task clearml
         :param every_n_epoch: save each n epoch
@@ -75,6 +77,25 @@ class ConfusionMatrix(Callback):
         """
         self._store_outputs(batch, outputs)
 
+    def _reset(self):
+        """
+        Clear update predicts
+        :return:
+        """
+        self.predicts = []
+        self.targets = []
+
+    def _store_outputs(self, batch: Dict[str, torch.Tensor], outputs: torch.Tensor) -> None:
+        """
+        Adв batch outputs and labels
+
+        :param batch: batch
+        :param outputs: outputs predicts
+        :return:
+        """
+        self.predicts.append(outputs)
+        self.targets.append(batch['label'])
+
     def on_validation_epoch_end(
         self,
         trainer: 'pl.Trainer',
@@ -89,6 +110,7 @@ class ConfusionMatrix(Callback):
         """
         if trainer.current_epoch % self.every_n_epoch != 0:
             self._log_confusion_matrix(trainer)
+            self._log_each_class_metric(trainer)
 
     def _log_confusion_matrix(self, trainer: 'pl.Trainer'):
         """
@@ -124,21 +146,33 @@ class ConfusionMatrix(Callback):
             matrix=cf_matrix,
         )
 
-    def _reset(self):
-        """
-        Clear update predicts
-        :return:
-        """
-        self.predicts = []
-        self.targets = []
+    def _log_each_class_metric(self, trainer):
+        targets = (
+            torch.cat(
+                self.targets,
+                dim=0,
+            )
+            .detach()  # noqa: WPS348
+            .cpu()  # noqa: WPS348
+            .numpy()  # noqa: WPS348
+        )
+        predicts = (
+            torch.cat(
+                self.predicts,
+                dim=0,
+            )
+            .detach()  # noqa: WPS348
+            .cpu()  # noqa: WPS348
+            .numpy()  # noqa: WPS348
+        )
 
-    def _store_outputs(self, batch: Dict[str, torch.Tensor], outputs: torch.Tensor) -> None:
-        """
-        Adв batch outputs and labels
+        f1_scores = f1_score(targets, predicts, average=None)
+        print(f1_scores)
 
-        :param batch: batch
-        :param outputs: outputs predicts
-        :return:
-        """
-        self.predicts.append(outputs)
-        self.targets.append(batch['label'])
+        for label, scalar in zip(list(DECODE_TOPIC['social_dem'].keys()), f1_scores):
+            self.clearml_task.task.logger.current_logger().report_scalar(
+                'Each Class f1',
+                label,
+                iteration=trainer.current_epoch,
+                value=scalar
+            )

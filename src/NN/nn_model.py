@@ -58,7 +58,7 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
         self.save_hyperparameters()
 
     def on_fit_start(self) -> None:
-        self.weights = get_class_weights(self.trainer.train_dataloader.dataset.labels)
+        self.weights = get_class_weights(self.trainer.train_dataloader.dataset.labels).to(self.device)
 
     def forward(self, batch: Dict[str, torch.Tensor]) -> torch.Tensor:
         """
