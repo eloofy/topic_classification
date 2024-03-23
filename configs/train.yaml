@@ -1,7 +1,7 @@
 project_name: BERTClassification
-experiment_name: exp_main
+experiment_name: exp_main_base_bert
 data_config:
   batch_size: 64
   train_size: 0.8
   pin_memory: true
-  num_samples: 6755
+  num_samples: 82507

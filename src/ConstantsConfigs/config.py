@@ -31,7 +31,7 @@ class DataConfig(_BaseValidatedConfig):
     batch_size: int = 64
     train_size: float = 0.8
     pin_memory: bool = True
-    num_samples: int = 104758
+    num_samples: int = 82507
     shuffle: bool = True
     dataset_name: str = 'data_topic_soc_dem_full.xlsx'
     task_name: str = 'social_dem'
@@ -41,16 +41,16 @@ class DataConfig(_BaseValidatedConfig):
 class ModelConfig(_BaseValidatedConfig):
     name_model: str = 'BERT'
     pretrained: bool = False
-    num_classes: int = 32
+    num_classes: int = 31
     optimizer: SerializableOBj = SerializableOBj(
         target_class='torch.optim.AdamW',
         kwargs={'lr': 1e-4, 'weight_decay': 1e-1},
     )
     vocab_size: int = 100792
-    hidden_size: int = 256
-    embed_size: int = 300
-    num_layers: int = 6
-    num_attention_heads: int = 16
+    hidden_size: int = 512
+    embed_size: int = 900
+    num_layers: int = 9
+    num_attention_heads: int = 32
 
 
 class TrainerConfig(_BaseValidatedConfig):
@@ -79,7 +79,7 @@ class ExperimentConfig(_BaseValidatedConfig):
     """
 
     project_name: str = 'BERTClassification'
-    experiment_name: str = 'exp_main'
+    experiment_name: str = 'exp_main_base_bert'
     trainer_config: TrainerConfig = Field(default=TrainerConfig())
     data_config: DataConfig = Field(default=DataConfig())
     module_config: ModelConfig = Field(default=ModelConfig())

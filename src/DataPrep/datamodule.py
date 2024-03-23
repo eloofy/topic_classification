@@ -47,7 +47,7 @@ class TextClassificationDatamodule(LightningDataModule):
             data_full = load_dataset(self.data_path_file)
             data_train, data_val = train_test_split(
                 data_full,
-                test_size=self.cfg.train_size,
+                train_size=self.cfg.train_size,
                 stratify=data_full['topic'],
             )
             self.data_train = TextClassificationDataset(
@@ -56,7 +56,7 @@ class TextClassificationDatamodule(LightningDataModule):
                 task=self.cfg.task_name,
             )
             self.data_val = TextClassificationDataset(
-                data_train,
+                data_val,
                 tokenizer=self.tokenizer,
                 task=self.cfg.task_name,
             )
