@@ -40,7 +40,8 @@ class DataConfig(_BaseValidatedConfig):
 
 class ModelConfig(_BaseValidatedConfig):
     name_model: str = 'BERT'
-    pretrained: bool = False
+    pretrained: bool = True
+    pretrained_model: str = 'MonoHime/rubert-base-cased-sentiment-new'
     num_classes: int = 31
     optimizer: SerializableOBj = SerializableOBj(
         target_class='torch.optim.AdamW',

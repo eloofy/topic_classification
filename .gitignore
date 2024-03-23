@@ -162,3 +162,4 @@ cython_debug/
 /notebooks/EDA.html
 /dataset/data_topic_soc_dem_full.xlsx
 src/ConstantsConfigs/constants.py
+/src/BestResults/BERT-epoch=149--val_loss=0.00000000--valid_f1=1.0000.ckpt

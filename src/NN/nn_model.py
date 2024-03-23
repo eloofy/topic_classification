@@ -52,8 +52,12 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
             attention_probs_dropout_prob=0.1,
         )
 
-        self.model = BertModel(config=config)
-        self.fc = torch.nn.Linear(cfg.hidden_size, cfg.num_classes)
+        if cfg.pretrained:
+            self.model = BertModel.from_pretrained(cfg.pretrained_model)
+
+        else:
+            self.model = BertModel(config=config)
+            self.fc = torch.nn.Linear(cfg.hidden_size, cfg.num_classes)
 
         self.save_hyperparameters()
 

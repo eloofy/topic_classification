@@ -22,7 +22,6 @@ transformers = "^4.38.2"
 lightning = {version = "2.1", extras = ["extra"]}
 scikit-learn = "^1.4.1.post1"
 seaborn = "^0.13.2"
-torchinfo = "^1.8.0"
 
 [[tool.poetry.source]]
 name = "pytorch-gpu-src"
