@@ -31,26 +31,26 @@ class DataConfig(_BaseValidatedConfig):
     batch_size: int = 64
     train_size: float = 0.8
     pin_memory: bool = True
-    num_samples: int = 82507
+    num_samples: int = 116243
     shuffle: bool = True
     dataset_name: str = 'data_topic_soc_dem_full.xlsx'
     task_name: str = 'social_dem'
-    pretrained_tokenizer: str = 'MonoHime/rubert-base-cased-sentiment-new'
+    pretrained_tokenizer: str = 'data_topic_soc_dem_full_end2end.xlsx'
 
 
 class ModelConfig(_BaseValidatedConfig):
     name_model: str = 'BERT'
-    pretrained: bool = True
+    pretrained: bool = False
     pretrained_model: str = 'MonoHime/rubert-base-cased-sentiment-new'
-    num_classes: int = 31
+    num_classes: int = 29
     optimizer: SerializableOBj = SerializableOBj(
         target_class='torch.optim.AdamW',
         kwargs={'lr': 1e-4, 'weight_decay': 1e-1},
     )
     vocab_size: int = 100792
-    hidden_size: int = 512
+    hidden_size: int = 768
     embed_size: int = 900
-    num_layers: int = 9
+    num_layers: int = 6
     num_attention_heads: int = 32
 
 
@@ -59,12 +59,12 @@ class TrainerConfig(_BaseValidatedConfig):
     Trainer config
     """
 
-    min_epochs: int = 150
-    max_epochs: int = 150
+    min_epochs: int = 20
+    max_epochs: int = 30
     check_val_every_n_epoch: int = 1
-    log_every_n_steps: int = 8
-    gradient_clip_val: Optional[float] = None
-    gradient_clip_algorithm: Optional[Literal['norm', 'value']] = None
+    log_every_n_steps: int = 1
+    gradient_clip_val: Optional[float] = 0.1
+    gradient_clip_algorithm: Optional[Literal['norm', 'value']] = 'norm'
     deterministic: bool = False
     fast_dev_run: bool = False
     default_root_dir: Optional[Path] = None

@@ -1,5 +1,6 @@
 from typing import Any, Dict
 
+import torch.nn as nn
 import torch
 import torch.nn.functional as func
 from pytorch_lightning import LightningModule
@@ -48,16 +49,16 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
             num_hidden_layers=cfg.num_layers,
             num_attention_heads=cfg.num_attention_heads,
             intermediate_size=512,
-            hidden_dropout_prob=0.1,
-            attention_probs_dropout_prob=0.1,
+            hidden_dropout_prob=0.2,
+            attention_probs_dropout_prob=0.2,
         )
 
         if cfg.pretrained:
             self.model = BertModel.from_pretrained(cfg.pretrained_model)
-
         else:
             self.model = BertModel(config=config)
-            self.fc = torch.nn.Linear(cfg.hidden_size, cfg.num_classes)
+
+        self.classifier = nn.Linear(cfg.hidden_size, cfg.num_classes)
 
         self.save_hyperparameters()
 
@@ -71,7 +72,7 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
         :return: results
         """
         outputs = self.model(batch['input_ids'], attention_mask=batch['attention_mask'])
-        return self.fc(outputs.pooler_output)
+        return self.classifier(outputs.pooler_output)
 
     def training_step(
         self,

@@ -31,7 +31,7 @@ def train(cfg: ExperimentConfig) -> None:  # noqa: WPS210
     )
     confusion_tracking = ConfusionMatrix(
         tracking_cb,
-        every_n_epoch=5,
+        every_n_epoch=1,
         labels=list(DECODE_TOPIC[cfg.data_config.task_name].keys()))
     summary = LogModelSummary()
     each_class_f1 = EachClassPercentCallback(
@@ -47,9 +47,9 @@ def train(cfg: ExperimentConfig) -> None:  # noqa: WPS210
         ModelCheckpoint(
             filename='BERT-{epoch}--{mean_valid_loss:.4f}--{valid_f1:.4f}',
             save_top_k=1,
-            monitor='valid_f1',
+            monitor='mean_valid_loss',
             mode='max',
-            every_n_epochs=50,
+            every_n_epochs=5,
         ),
     ]
 
