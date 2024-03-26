@@ -33,9 +33,9 @@ class DataConfig(_BaseValidatedConfig):
     pin_memory: bool = True
     num_samples: int = 116243
     shuffle: bool = True
-    dataset_name: str = 'data_topic_soc_dem_full.xlsx'
+    dataset_name: str = 'data_topic_soc_dem_full_end2end.xlsx'
     task_name: str = 'social_dem'
-    pretrained_tokenizer: str = 'data_topic_soc_dem_full_end2end.xlsx'
+    pretrained_tokenizer: str = 'MonoHime/rubert-base-cased-sentiment-new'
 
 
 class ModelConfig(_BaseValidatedConfig):

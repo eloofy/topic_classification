@@ -28,7 +28,7 @@ class TextClassificationDatamodule(LightningDataModule):
         self.cfg = cfg
 
         self.data_path_file = Path(DEFAULT_DATA_PATH / cfg.dataset_name)
-        self.tokenizer = AutoTokenizer.from_pretrained(cfg.pretrained_tokenizer)
+        self.tokenizer = AutoTokenizer.from_pretrained(cfg.pretrained_model)
 
         self.save_hyperparameters(logger=False)
 
