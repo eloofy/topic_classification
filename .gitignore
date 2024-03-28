@@ -163,4 +163,8 @@ cython_debug/
 /dataset/data_topic_soc_dem_full.xlsx
 src/ConstantsConfigs/constants.py
 /src/BestResults/BERT-epoch=149--val_loss=0.00000000--valid_f1=1.0000.ckpt
+/dataset/data_topic_soc_dem_full_with_another.xlsx
+/dataset/data_topic_soc_dem_full_with_add_class.xlsx
 /dataset/data_topic_soc_dem_full_end2end.xlsx
+/dataset/data_topic_soc_dem_full_end2end.xlsx
+/src/BestResults/BERT-epoch=4--mean_valid_loss=1.1646--valid_f1=0.6375.ckpt
