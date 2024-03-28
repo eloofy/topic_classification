@@ -48,7 +48,7 @@ def train(cfg: ExperimentConfig) -> None:  # noqa: WPS210
             filename='BERT-{epoch}--{mean_valid_loss:.4f}--{valid_f1:.4f}',
             save_top_k=1,
             monitor='mean_valid_loss',
-            mode='max',
+            mode='min',
             every_n_epochs=5,
         ),
     ]
