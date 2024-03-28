@@ -15,5 +15,6 @@ def get_metrics(**kwargs: Any) -> MetricCollection:
             'f1': F1Score(**kwargs),
             'precision': Precision(**kwargs),
             'recall': Recall(**kwargs),
+            'accuracy': Recall(**kwargs)
         },
     )

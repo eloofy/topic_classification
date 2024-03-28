@@ -16,6 +16,6 @@ def get_class_weights(labels_data):
             key=lambda x: x[0],
         ),
     )
-    weights = [1 / x for x in dict_counts.values()]
+    weights = [1 / (len(dict_counts) * x) for x in dict_counts.values()]
 
     return torch.tensor(weights)
