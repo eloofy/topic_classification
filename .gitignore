@@ -168,3 +168,4 @@ src/ConstantsConfigs/constants.py
 /dataset/data_topic_soc_dem_full_end2end.xlsx
 /dataset/data_topic_soc_dem_full_end2end.xlsx
 /src/BestResults/BERT-epoch=4--mean_valid_loss=1.1646--valid_f1=0.6375.ckpt
+/src/BestResults/BERT-epoch=4--mean_valid_loss=1.1646--valid_f1=0.6375.zip
