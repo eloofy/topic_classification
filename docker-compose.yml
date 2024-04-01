@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  topic_classification_app:
+    build:
+      context: .
+    container_name: "ts_app"
+    restart: always
+    entrypoint: ["/opt/app/entrypoint.sh"]
+    env_file:
+      - .env
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    volumes:
+      - "./src/BestResults/BERT-epoch=149--val_loss=0.00000000--valid_f1=1.0000.ckpt:/opt/app/src/BestResults/BERT-epoch=149--val_loss=0.00000000--valid_f1=1.0000.ckpt"
+    networks:
+      - nginx-network
+
+networks:
+  nginx-network:
+    external: true
