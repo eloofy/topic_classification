@@ -19,7 +19,7 @@ class TextClassifierApp:
         :param cfg: cfg best model
         :param labels: labels dictionary
         """
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.device = torch.device('cpu')
         self.cfg = cfg
         self.model = self.load_model(DEFAULT_PROJECT_PATH / model_path)
         self.tokenizer = AutoTokenizer.from_pretrained(
@@ -60,7 +60,45 @@ class TextClassifierApp:
         with torch.no_grad():
             output = self.model.predict_step(tokenized_text.data, 0, 0)
             prediction = torch.argmax(output).item()
-        return prediction, output
+        return prediction, torch.softmax(output, dim=1)
+
+    @classmethod
+    def get_user_response_classification(cls):
+        """
+        Get right or false response classification
+        """
+        cols = st.columns(9)
+        if cols[0].button(  # noqa: WPS337
+            'Right',
+            key='correct_button',
+            help='Нажмите, если ответ правильный',
+            on_click=lambda: st.info('Спасибо за обратную связь!'),
+        ):
+            # sasha func
+            pass  # noqa: WPS420
+
+        if cols[-1].button(  # noqa: WPS337
+            'False',
+            key='wrong_button',
+            help='Нажмите, если ответ неправильный',
+            on_click=lambda: st.info('Спасибо за обратную связь!'),
+        ):
+            # sasha func
+            pass  # noqa: WPS420
+
+        return 'response'
+
+    def make_probs_table(self, output):
+        probabilities = output.cpu().numpy().squeeze()
+        prob_table = dict(
+            sorted(
+                ((self.labels[i], prob) for i, prob in enumerate(probabilities)),
+                key=lambda x: x[1],
+                reverse=True,
+            ),
+        )
+        st.write('Вероятность каждого класса:')
+        st.table(prob_table)
 
     def run(self):
         """
@@ -76,5 +114,10 @@ class TextClassifierApp:
             if user_input.strip():
                 prediction, output = self.predict(user_input)
                 st.success(f'Класс текста: {self.labels[prediction]}')
-            else:
-                st.warning('Пожалуйста, введите текст для классификации.')
+
+                self.make_probs_table(output)
+                self.get_user_response_classification()
+
+                return
+
+        st.warning('Пожалуйста, введите текст для классификации.')
