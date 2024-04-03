@@ -14,11 +14,11 @@ services:
     volumes:
       - "./src/BestResults/BERT-epoch=149--val_loss=0.00000000--valid_f1=1.0000.ckpt:/opt/app/src/BestResults/BERT-epoch=149--val_loss=0.00000000--valid_f1=1.0000.ckpt"
     networks:
-      - nginx-network
+      - nginx_network
       - api_network
 
 networks:
-  nginx-network:
+  nginx_network:
     external: true
   api_network:
     external: true
