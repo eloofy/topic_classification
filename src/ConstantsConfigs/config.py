@@ -84,6 +84,7 @@ class ExperimentConfig(_BaseValidatedConfig):
     trainer_config: TrainerConfig = Field(default=TrainerConfig())
     data_config: DataConfig = Field(default=DataConfig())
     module_config: ModelConfig = Field(default=ModelConfig())
+    external_api_base_url: str = 'http://media_analyzer_app:8000/api/v1'
 
     @classmethod
     def from_yaml(cls, path: Union[str, Path]) -> 'ExperimentConfig':
