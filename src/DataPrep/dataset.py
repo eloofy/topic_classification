@@ -17,8 +17,8 @@ class TextClassificationDataset(Dataset):
         :param df: data
         :param tokenizer: tokenizer for texts
         """
-        self.texts = df['text'].values
-        self.labels = df['topic'].values
+        self.texts = df["text"].values
+        self.labels = df["topic"].values
         self.tokenizer = tokenizer
         self.task = task
 
@@ -34,17 +34,17 @@ class TextClassificationDataset(Dataset):
         text_tokenized = self.tokenizer.encode_plus(
             text,
             max_length=512,
-            padding='max_length',
+            padding="max_length",
             truncation=True,
             return_attention_mask=True,
             return_token_type_ids=False,
-            return_tensors='pt',
+            return_tensors="pt",
         )
 
         return {
-            'input_ids': text_tokenized.data['input_ids'].squeeze(0),
-            'attention_mask': text_tokenized.data['attention_mask'].squeeze(0),
-            'label': torch.tensor(self.label2ind(str(label))),
+            "input_ids": text_tokenized.data["input_ids"].squeeze(0),
+            "attention_mask": text_tokenized.data["attention_mask"].squeeze(0),
+            "label": torch.tensor(self.label2ind(str(label))),
         }
 
     def __len__(self) -> int:

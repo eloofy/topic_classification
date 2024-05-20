@@ -11,7 +11,7 @@ class _BaseValidatedConfig(BaseModel):
     Validated config with extra='forbid'
     """
 
-    model_config = ConfigDict(extra='forbid')
+    model_config = ConfigDict(extra="forbid")
 
 
 class SerializableOBj(_BaseValidatedConfig):
@@ -31,21 +31,21 @@ class DataConfig(_BaseValidatedConfig):
     batch_size: int = 64
     train_size: float = 0.8
     pin_memory: bool = True
-    num_samples: int = 116243
+    num_samples: int = 8362
     shuffle: bool = True
-    dataset_name: str = 'data_topic_soc_dem_full_end2end.xlsx'
-    task_name: str = 'social_dem'
-    pretrained_tokenizer: str = 'MonoHime/rubert-base-cased-sentiment-new'
+    dataset_name: str = "DATA.xlsx"
+    task_name: str = "cars"
+    pretrained_tokenizer: str = "MonoHime/rubert-base-cased-sentiment-new"
 
 
 class ModelConfig(_BaseValidatedConfig):
-    name_model: str = 'BERT'
+    name_model: str = "BERT"
     pretrained: bool = False
-    pretrained_model: str = 'MonoHime/rubert-base-cased-sentiment-new'
+    pretrained_model: str = "MonoHime/rubert-base-cased-sentiment-new"
     num_classes: int = 29
     optimizer: SerializableOBj = SerializableOBj(
-        target_class='torch.optim.AdamW',
-        kwargs={'lr': 1e-4, 'weight_decay': 1e-1},
+        target_class="torch.optim.AdamW",
+        kwargs={"lr": 1e-4, "weight_decay": 1e-1},
     )
     vocab_size: int = 100792
     hidden_size: int = 768
@@ -64,12 +64,12 @@ class TrainerConfig(_BaseValidatedConfig):
     check_val_every_n_epoch: int = 1
     log_every_n_steps: int = 1
     gradient_clip_val: Optional[float] = 0.1
-    gradient_clip_algorithm: Optional[Literal['norm', 'value']] = 'norm'
+    gradient_clip_algorithm: Optional[Literal["norm", "value"]] = "norm"
     deterministic: bool = False
     fast_dev_run: bool = False
     default_root_dir: Optional[Path] = None
     detect_anomaly: bool = False
-    accelerator: str = 'gpu'
+    accelerator: str = "gpu"
     devices: List = [0]
     logger: bool = True
 
@@ -79,15 +79,15 @@ class ExperimentConfig(_BaseValidatedConfig):
     Experiment config
     """
 
-    project_name: str = 'BERTClassification'
-    experiment_name: str = 'exp_main_base_bert'
+    project_name: str = "BERTClassification"
+    experiment_name: str = "exp_main_base_bert"
     trainer_config: TrainerConfig = Field(default=TrainerConfig())
     data_config: DataConfig = Field(default=DataConfig())
     module_config: ModelConfig = Field(default=ModelConfig())
     external_api_base_url: str = 'http://media_analyzer_app:8000/api/v1'
 
     @classmethod
-    def from_yaml(cls, path: Union[str, Path]) -> 'ExperimentConfig':
+    def from_yaml(cls, path: Union[str, Path]) -> "ExperimentConfig":
         """
         Load config from yaml
         :param path: path to model config yaml
@@ -102,7 +102,7 @@ class ExperimentConfig(_BaseValidatedConfig):
         :param path: yaml path
         :return:
         """
-        with open(path, 'w') as out_file:
+        with open(path, "w") as out_file:
             yaml.safe_dump(
                 self.model_dump(),
                 out_file,

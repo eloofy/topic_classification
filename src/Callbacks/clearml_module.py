@@ -46,4 +46,7 @@ class ClearMLTracking(Callback):
             output_uri=True,
         )
         self.task.connect_configuration(configuration=self.cfg.model_dump())
-        self.output_model = OutputModel(task=self.task, label_enumeration=self.label_enumeration)
+        self.output_model = OutputModel(
+            task=self.task,
+            label_enumeration=self.label_enumeration,
+        )
