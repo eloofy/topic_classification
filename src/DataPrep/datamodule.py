@@ -11,7 +11,7 @@ from src.ConstantsConfigs.constants import DEFAULT_PROJECT_PATH
 from src.DataPrep.dataset import TextClassificationDataset
 from src.DataPrep.load_data_df import load_dataset
 
-DEFAULT_DATA_PATH = Path(DEFAULT_PROJECT_PATH / 'dataset')
+DEFAULT_DATA_PATH = Path(DEFAULT_PROJECT_PATH / "dataset")
 
 
 class TextClassificationDatamodule(LightningDataModule):
@@ -43,12 +43,12 @@ class TextClassificationDatamodule(LightningDataModule):
         :param stage: stage of data loading
         :return:
         """
-        if stage == 'fit':
+        if stage == "fit":
             data_full = load_dataset(self.data_path_file)
             data_train, data_val = train_test_split(
                 data_full,
                 train_size=self.cfg.train_size,
-                stratify=data_full['topic'],
+                stratify=data_full["topic"],
             )
             self.data_train = TextClassificationDataset(
                 data_train,
@@ -61,7 +61,7 @@ class TextClassificationDatamodule(LightningDataModule):
                 task=self.cfg.task_name,
             )
 
-        elif stage == 'test':
+        elif stage == "test":
             return
 
     def train_dataloader(self):

@@ -2,7 +2,7 @@ import logging
 import os
 from typing import Union
 
-_LOG_LEVEL = os.environ.get('LOG_LEVEL', 'DEBUG')
+_LOG_LEVEL = os.environ.get("LOG_LEVEL", "DEBUG")
 LOG_LEVEL = getattr(logging, _LOG_LEVEL.upper(), logging.DEBUG)
 
 
@@ -17,7 +17,7 @@ def setup_logger(name: str, log_level: Union[int, str] = LOG_LEVEL) -> logging.L
     logger.setLevel(log_level)
 
     formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
     console_handler = logging.StreamHandler()
@@ -29,4 +29,4 @@ def setup_logger(name: str, log_level: Union[int, str] = LOG_LEVEL) -> logging.L
     return logger
 
 
-LOGGER = setup_logger(name='training')
+LOGGER = setup_logger(name="training")

@@ -1,12 +1,11 @@
-from typing import Any, List, Dict
+from typing import Any, Dict, List
 
 import pytorch_lightning as pl
 import torch
 from pytorch_lightning import Callback, LightningModule, Trainer
 from pytorch_lightning.utilities.types import STEP_OUTPUT
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, f1_score
 from torchinfo import summary
-from sklearn.metrics import f1_score
 
 from src.Callbacks.clearml_module import ClearMLTracking
 from src.ConstantsConfigs.constants import DECODE_TOPIC
@@ -21,14 +20,19 @@ class LogModelSummary(Callback):
         :param pl_module: main model
         :return:
         """
-        text = next(iter(trainer.train_dataloader))['input_ids']
+        text = next(iter(trainer.train_dataloader))["input_ids"]
 
         text = text.to(pl_module.device)
         summary(pl_module.model, input_data=text)
 
 
 class PredictsCallbackBase(Callback):
-    def __init__(self, clearml_task: ClearMLTracking, every_n_epoch: int, labels: List[str]):
+    def __init__(
+        self,
+        clearml_task: ClearMLTracking,
+        every_n_epoch: int,
+        labels: List[str],
+    ):
         """
         Constructor for Confusion Matrix Callback
 
@@ -58,8 +62,8 @@ class PredictsCallbackBase(Callback):
 
     def on_validation_batch_end(
         self,
-        trainer: 'pl.Trainer',
-        pl_module: 'pl.LightningModule',
+        trainer: "pl.Trainer",
+        pl_module: "pl.LightningModule",
         outputs: STEP_OUTPUT,
         batch: Any,
         batch_idx: int,
@@ -86,7 +90,11 @@ class PredictsCallbackBase(Callback):
         self.predicts = []
         self.targets = []
 
-    def _store_outputs(self, batch: Dict[str, torch.Tensor], outputs: torch.Tensor) -> None:
+    def _store_outputs(
+        self,
+        batch: Dict[str, torch.Tensor],
+        outputs: torch.Tensor,
+    ) -> None:
         """
         Adв batch outputs and labels
 
@@ -95,17 +103,22 @@ class PredictsCallbackBase(Callback):
         :return:
         """
         self.predicts.append(outputs)
-        self.targets.append(batch['label'])
+        self.targets.append(batch["label"])
 
 
 class ConfusionMatrix(PredictsCallbackBase):
-    def __init__(self, clearml_task: ClearMLTracking, every_n_epoch: int, labels: List[str]):
+    def __init__(
+        self,
+        clearml_task: ClearMLTracking,
+        every_n_epoch: int,
+        labels: List[str],
+    ):
         super().__init__(clearml_task, every_n_epoch, labels)
 
     def on_validation_epoch_end(
         self,
-        trainer: 'pl.Trainer',
-        pl_module: 'pl.LightningModule',
+        trainer: "pl.Trainer",
+        pl_module: "pl.LightningModule",
     ) -> None:
         """
         Check epoch and log confusion matrix
@@ -117,7 +130,7 @@ class ConfusionMatrix(PredictsCallbackBase):
         if trainer.current_epoch % self.every_n_epoch == 0:
             self._log_confusion_matrix(trainer)
 
-    def _log_confusion_matrix(self, trainer: 'pl.Trainer'):
+    def _log_confusion_matrix(self, trainer: "pl.Trainer"):
         """
         Log confusion matrix
 
@@ -142,12 +155,12 @@ class ConfusionMatrix(PredictsCallbackBase):
             .cpu()  # noqa: WPS348
             .numpy()  # noqa: WPS348
         )
-        cf_matrix = confusion_matrix(targets, predicts, normalize='true')
+        cf_matrix = confusion_matrix(targets, predicts, normalize="true")
         self.clearml_task.task.logger.current_logger().report_confusion_matrix(
-            f'Confusion matrix: epoch {trainer.current_epoch}',
-            'ignored',
-            xaxis='Predicted',
-            yaxis='Actual',
+            f"Confusion matrix: epoch {trainer.current_epoch}",
+            "ignored",
+            xaxis="Predicted",
+            yaxis="Actual",
             xlabels=self.labels,
             ylabels=self.labels,
             matrix=cf_matrix,
@@ -155,13 +168,18 @@ class ConfusionMatrix(PredictsCallbackBase):
 
 
 class EachClassPercentCallback(PredictsCallbackBase):
-    def __init__(self, clearml_task: ClearMLTracking, every_n_epoch: int, labels: List[str]):
+    def __init__(
+        self,
+        clearml_task: ClearMLTracking,
+        every_n_epoch: int,
+        labels: List[str],
+    ):
         super().__init__(clearml_task, every_n_epoch, labels)
 
     def on_validation_epoch_end(
         self,
-        trainer: 'pl.Trainer',
-        pl_module: 'pl.LightningModule',
+        trainer: "pl.Trainer",
+        pl_module: "pl.LightningModule",
     ) -> None:
         """
         Check epoch and log confusion matrix
@@ -195,10 +213,10 @@ class EachClassPercentCallback(PredictsCallbackBase):
 
         f1_scores = f1_score(targets, predicts, average=None)
 
-        for label, scalar in zip(list(DECODE_TOPIC['social_dem'].keys()), f1_scores):
+        for label, scalar in zip(list(DECODE_TOPIC["social_dem"].keys()), f1_scores):
             self.clearml_task.task.logger.current_logger().report_scalar(
-                'Each Class f1',
+                "Each Class f1",
                 label,
                 iteration=trainer.current_epoch,
-                value=scalar
+                value=scalar,
             )

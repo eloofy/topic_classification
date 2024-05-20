@@ -1,7 +1,7 @@
 from typing import Any, Dict
 
-import torch.nn as nn
 import torch
+import torch.nn as nn
 import torch.nn.functional as func
 from pytorch_lightning import LightningModule
 from torchmetrics import MeanMetric
@@ -37,11 +37,11 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
         metrics = get_metrics(
             num_classes=cfg.num_classes,
             num_labels=cfg.num_classes,
-            task='multiclass',
-            average='macro',
+            task="multiclass",
+            average="macro",
         )
 
-        self._valid_metrics = metrics.clone(prefix='valid_')
+        self._valid_metrics = metrics.clone(prefix="valid_")
 
         config = BertConfig(
             vocab_size=cfg.vocab_size,
@@ -63,7 +63,9 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
         self.save_hyperparameters()
 
     def on_fit_start(self) -> None:
-        self.weights = get_class_weights(self.trainer.train_dataloader.dataset.labels).to(self.device)
+        self.weights = get_class_weights(
+            self.trainer.train_dataloader.dataset.labels,
+        ).to(self.device)
 
     def forward(self, batch: Dict[str, torch.Tensor]) -> torch.Tensor:
         """
@@ -71,7 +73,7 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
         :param batch: barch dict
         :return: results
         """
-        outputs = self.model(batch['input_ids'], attention_mask=batch['attention_mask'])
+        outputs = self.model(batch["input_ids"], attention_mask=batch["attention_mask"])
         return self.classifier(outputs.pooler_output)
 
     def training_step(
@@ -85,11 +87,11 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
         """
         logits = self(batch)
 
-        loss = func.cross_entropy(logits, batch['label'], weight=self.weights)
+        loss = func.cross_entropy(logits, batch["label"], weight=self.weights)
         self._train_loss.update(loss)
 
-        self.log('step_loss', loss, on_step=True, prog_bar=True, logger=True)
-        return {'loss': loss, 'logits': logits}
+        self.log("step_loss", loss, on_step=True, prog_bar=True, logger=True)
+        return {"loss": loss, "logits": logits}
 
     def on_train_epoch_end(self) -> None:
         """
@@ -97,7 +99,7 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
         :return: none
         """
         self.log(
-            'mean_train_loss',
+            "mean_train_loss",
             self._train_loss.compute(),
             on_step=False,
             prog_bar=True,
@@ -118,11 +120,11 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
         :return: logits
         """
         logits = self(batch)
-        loss = func.cross_entropy(logits, batch['label'])
+        loss = func.cross_entropy(logits, batch["label"])
         self._valid_loss.update(loss)
 
         predictions = torch.argmax(logits, dim=1)
-        self._valid_metrics.update(predictions, batch['label'])
+        self._valid_metrics.update(predictions, batch["label"])
 
         return predictions
 
@@ -132,7 +134,7 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
         :return: none
         """
         self.log(
-            'mean_valid_loss',
+            "mean_valid_loss",
             self._valid_loss.compute(),
             on_step=False,
             prog_bar=True,
@@ -160,11 +162,11 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
             num_cycles=1.4,
         )
         return {
-            'optimizer': optimizer,
-            'lr_scheduler': {
-                'scheduler': scheduler,
-                'interval': 'step',
-                'frequency': 1,
+            "optimizer": optimizer,
+            "lr_scheduler": {
+                "scheduler": scheduler,
+                "interval": "step",
+                "frequency": 1,
             },
         }
 
