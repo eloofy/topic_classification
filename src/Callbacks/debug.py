@@ -5,7 +5,6 @@ import torch
 from pytorch_lightning import Callback, LightningModule, Trainer
 from pytorch_lightning.utilities.types import STEP_OUTPUT
 from sklearn.metrics import confusion_matrix
-from torchinfo import summary
 from sklearn.metrics import f1_score
 
 from src.Callbacks.clearml_module import ClearMLTracking
@@ -24,7 +23,7 @@ class LogModelSummary(Callback):
         text = next(iter(trainer.train_dataloader))['input_ids']
 
         text = text.to(pl_module.device)
-        summary(pl_module.model, input_data=text)
+        # summary(pl_module.model, input_data=text)
 
 
 class PredictsCallbackBase(Callback):

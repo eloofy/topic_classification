@@ -4,4 +4,4 @@ data_config:
   batch_size: 64
   train_size: 0.8
   pin_memory: true
-  num_samples: 82507
+  num_samples: 8362

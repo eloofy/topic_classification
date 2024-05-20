@@ -6,7 +6,7 @@ import torch
 from torch.utils.data import Dataset
 from transformers import PreTrainedTokenizerFast
 
-from src.ConstantsConfigs.constants import DECODE_TOPIC
+from src.ConstantsConfigs.constants import DECODE_TOPIC_CAR
 
 
 class TextClassificationDataset(Dataset):
@@ -44,7 +44,7 @@ class TextClassificationDataset(Dataset):
         return {
             'input_ids': text_tokenized.data['input_ids'].squeeze(0),
             'attention_mask': text_tokenized.data['attention_mask'].squeeze(0),
-            'label': torch.tensor(self.label2ind(str(label))),
+            'label': torch.tensor(self.label2ind(label)),
         }
 
     def __len__(self) -> int:
@@ -71,4 +71,4 @@ class TextClassificationDataset(Dataset):
         :param label: label data
         :return: int label
         """
-        return DECODE_TOPIC[self.task][label]
+        return DECODE_TOPIC_CAR[label]
