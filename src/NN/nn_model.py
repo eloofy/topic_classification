@@ -55,6 +55,11 @@ class BERTModelClassic(LightningModule):  # noqa: WPS214
 
         if cfg.pretrained:
             self.model = BertModel.from_pretrained(cfg.pretrained_model)
+            # for name, param in self.model.named_parameters():
+            #     if "pooler.dense.weight" in name or 'pooler.dense.bias' in name:
+            #         param.requires_grad = True
+            #     else:
+            #         param.requires_grad = False
         else:
             self.model = BertModel(config=config)
 

@@ -8,7 +8,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import f1_score
 
 from src.Callbacks.clearml_module import ClearMLTracking
-from src.ConstantsConfigs.constants import DECODE_TOPIC
+from src.ConstantsConfigs.constants import DECODE_TOPIC_CAR
 
 
 class LogModelSummary(Callback):
@@ -194,7 +194,7 @@ class EachClassPercentCallback(PredictsCallbackBase):
 
         f1_scores = f1_score(targets, predicts, average=None)
 
-        for label, scalar in zip(list(DECODE_TOPIC['social_dem'].keys()), f1_scores):
+        for label, scalar in zip(list(DECODE_TOPIC_CAR.keys()), f1_scores):
             self.clearml_task.task.logger.current_logger().report_scalar(
                 'Each Class f1',
                 label,

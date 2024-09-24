@@ -15,6 +15,7 @@ import logging
 
 streamlit_root_logger = logging.getLogger(st.__name__)
 
+
 class TextClassifierApp:
     def __init__(self, model_path: Path, cfg: ExperimentConfig, labels: Dict):
         """

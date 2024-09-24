@@ -28,20 +28,20 @@ class DataConfig(_BaseValidatedConfig):
     Data config
     """
 
-    batch_size: int = 64
-    train_size: float = 0.8
+    batch_size: int = 32
+    train_size: float = 0.85
     pin_memory: bool = True
     num_samples: int = 8362
     shuffle: bool = True
     dataset_name: str = 'DATA.xlsx'
     task_name: str = 'social_dem'
-    pretrained_tokenizer: str = 'MonoHime/rubert-base-cased-sentiment-new'
+    pretrained_tokenizer: str = 'DeepPavlov/rubert-base-cased'
 
 
 class ModelConfig(_BaseValidatedConfig):
     name_model: str = 'BERT'
-    pretrained: bool = False
-    pretrained_model: str = 'MonoHime/rubert-base-cased-sentiment-new'
+    pretrained: bool = True
+    pretrained_model: str = 'DeepPavlov/rubert-base-cased'
     num_classes: int = 12
     optimizer: SerializableOBj = SerializableOBj(
         target_class='torch.optim.AdamW',
@@ -59,8 +59,8 @@ class TrainerConfig(_BaseValidatedConfig):
     Trainer config
     """
 
-    min_epochs: int = 20
-    max_epochs: int = 30
+    min_epochs: int = 10
+    max_epochs: int = 10
     check_val_every_n_epoch: int = 1
     log_every_n_steps: int = 1
     gradient_clip_val: Optional[float] = 0.1
@@ -70,7 +70,7 @@ class TrainerConfig(_BaseValidatedConfig):
     default_root_dir: Optional[Path] = None
     detect_anomaly: bool = False
     accelerator: str = 'gpu'
-    devices: List = [0]
+    devices: List = [2]
     logger: bool = True
 
 
@@ -79,7 +79,7 @@ class ExperimentConfig(_BaseValidatedConfig):
     Experiment config
     """
 
-    project_name: str = 'BERTClassification'
+    project_name: str = 'BERTClassificationCar'
     experiment_name: str = 'exp_main_base_bert'
     trainer_config: TrainerConfig = Field(default=TrainerConfig())
     data_config: DataConfig = Field(default=DataConfig())

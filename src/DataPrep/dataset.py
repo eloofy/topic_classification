@@ -39,6 +39,7 @@ class TextClassificationDataset(Dataset):
             return_attention_mask=True,
             return_token_type_ids=False,
             return_tensors='pt',
+            add_special_tokens=True
         )
 
         return {
